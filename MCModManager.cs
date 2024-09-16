@@ -1,3 +1,5 @@
+using System.ComponentModel.Design.Serialization;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace MinecraftModManager
@@ -7,10 +9,12 @@ namespace MinecraftModManager
         private Settings settings = new Settings();
         private List<ModGroup> ModGroups = new List<ModGroup>();
         private ModGroup? selectedModGroup = null;
+        private Mod? selectedMod = null;
         public MinecraftModManager()
         {
             InitializeComponent();
             this.FormClosing += FormCloseEvent;
+            ModCheckList.ItemCheck += ModCheckEvent;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -210,6 +214,7 @@ namespace MinecraftModManager
 
                     MessageBox.Show(this, "Group " + selectedModGroup.ModGroupName + " deleted.", "[Info] Delete group " + selectedModGroup.ModGroupName, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     selectedModGroup = null;
+                    selectedMod = null;
                     WriteResources();
                 }
             }
@@ -217,12 +222,79 @@ namespace MinecraftModManager
 
         private void button6_Click(object sender, EventArgs e)
         {
+            if (selectedModGroup == null) 
+            {
+                MessageBox.Show(this, "Can not add mod a null set!", "[Error] Add mod", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Multiselect = true;
+            fileDialog.InitialDirectory = settings.RootResourcePath;
+            fileDialog.Filter = "JAR Files (*.jar)|*.jar";
+            DialogResult result = fileDialog.ShowDialog();
+
+            if (result == DialogResult.OK) 
+            {
+                foreach (string fname in fileDialog.FileNames) 
+                {
+                    string fileName = Path.GetFileName(fname);
+                    string fileWithoutExtention = Path.GetFileNameWithoutExtension(fname);
+                    if (!Directory.Exists(settings.RootResourcePath + "\\" + selectedModGroup.ModGroupName))
+                    {
+                        Directory.CreateDirectory(settings.RootResourcePath + "\\" + selectedModGroup.ModGroupName);
+                    }
+                    if (File.Exists(settings.RootResourcePath + "\\" + selectedModGroup.ModGroupName + "\\" + fileName))
+                    {
+                        MessageBox.Show(this, "File already exists!", "[Error] Add mod", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    File.Copy(fname, settings.RootResourcePath + "\\" + selectedModGroup.ModGroupName + "\\" + fileName);
+
+                    Mod mod = new Mod();
+                    mod.ModName = fileWithoutExtention;
+                    mod.ModPath = settings.RootResourcePath + "\\" + selectedModGroup.ModGroupName + "\\" + fileName;
+                    mod.IsEnabled = true;
+                    if (selectedModGroup.mods == null) selectedModGroup.mods = new List<Mod>();
+                    selectedModGroup.mods.Add(mod);
+                    ModCheckList.Items.Add(mod.ModName);
+                    ModCheckList.SetItemChecked(ModCheckList.Items.Count - 1, true);
+                }
+            }
 
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
+            if (selectedModGroup == null) 
+            {
+                MessageBox.Show(this, "Can not delete mod from null group!", "[Error] Delte mod", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (selectedMod == null) 
+            {
+                MessageBox.Show(this, "Can not remove null object!", "[Error] Delete mod", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            ModCheckList.Items.Remove(selectedMod.ModName);
+            if (selectedModGroup.mods != null) selectedModGroup.mods.Remove(selectedMod);
+            WriteResources();
+
+            if (!File.Exists(selectedMod.ModPath)) 
+            {
+                MessageBox.Show(this, "Can not remove mod file dose not exist!", "[Error] Delete mod", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                File.Delete(selectedMod.ModPath);
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show(this, ex.Message, "[Error] Delete mod", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            selectedMod = null;
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -247,6 +319,7 @@ namespace MinecraftModManager
 
         private void ModGroupItembox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            selectedMod = null;
             if (ModGroupItembox.SelectedItems.Count <= 0) return;
             object? item = ModGroupItembox.SelectedItems[0];
             if (item == null) return;
@@ -263,6 +336,12 @@ namespace MinecraftModManager
             if (selectedModGroup != null)
             {
                 ModsGroupBox.Enabled = true;
+                ModCheckList.Items.Clear();
+                foreach (Mod mod in selectedModGroup.mods)
+                {
+                    ModCheckList.Items.Add(mod.ModName);
+                    ModCheckList.SetItemChecked(ModCheckList.Items.Count - 1, mod.IsEnabled);
+                }
             }
             else
             {
@@ -272,7 +351,30 @@ namespace MinecraftModManager
 
         private void ModCheckList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (selectedModGroup == null) return;
+            if (selectedModGroup.mods == null) return;
+            if (ModCheckList.SelectedIndex < 0 || ModCheckList.SelectedIndex > selectedModGroup.mods.Count) return;
 
+            if (selectedModGroup.mods[ModCheckList.SelectedIndex].ModName != ModCheckList.Items[ModCheckList.SelectedIndex]) 
+            {
+                MessageBox.Show(this, "Selection missmatch!", "[Error] Mod selection", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            selectedMod = selectedModGroup.mods[ModCheckList.SelectedIndex];
+        }
+
+        private void ModCheckEvent(object? sender, ItemCheckEventArgs e) 
+        {
+            if (selectedModGroup == null) return;
+            if (selectedModGroup.mods == null) return;
+            if (e.Index < 0 || selectedModGroup.mods.Count <= e.Index) 
+            {
+                MessageBox.Show(this, "Selection out of bounds!", "[Error] Check change", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            selectedModGroup.mods[e.Index].IsEnabled = e.NewValue == CheckState.Checked;
+            WriteResources();
         }
     }
 }
