@@ -299,12 +299,92 @@ namespace MinecraftModManager
 
         private void button7_Click(object sender, EventArgs e)
         {
+            if (selectedModGroup == null) 
+            {
+                MessageBox.Show(this, "Can not load mods from null mod group!", "[Error] Load mods", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (selectedModGroup.mods == null) 
+            {
+                MessageBox.Show(this, "No mods in mod group!", "[Error] Load mods", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (settings.PathModFolder == null) 
+            {
+                MessageBox.Show(this, "No destination folder set for mods!", "[Error] Load mods", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!Directory.Exists(settings.PathModFolder)) 
+            {
+                MessageBox.Show(this, "Mod path dose not exists!", "[Error] Load mods", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            DialogResult res = MessageBox.Show(this, "Load selected mods? This aciton will delete all mods in the selected mods folder:\n" + settings.PathModFolder + "\n\nLoad Mods?", "[Info] Load mods", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            if (res == DialogResult.OK) 
+            {
+                try
+                {
+                    IEnumerable<string> currentFiles = Directory.EnumerateFiles(settings.PathModFolder);
+                    foreach (string file in currentFiles)
+                    {
+                        string extention = Path.GetExtension(file);
+                        if (extention == ".jar" || extention == ".JAR") File.Delete(file);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, ex.Message, "[Error] Load mods", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+
+                for (int i = 0; i < ModCheckList.Items.Count; ++i)
+                {
+                    Debug.WriteLine("Check if mod is checked");
+                    if (ModCheckList.CheckedIndices.Contains(i))
+                    {
+                        Debug.WriteLine("Checked");
+
+                        if (ModCheckList.Items[i] == selectedModGroup.mods[i].ModName)
+                        {
+                            Debug.WriteLine("Same name");
+                            Mod cmod = selectedModGroup.mods[i];
+                            string filename = Path.GetFileName(cmod.ModPath);
+                            try
+                            {
+                                File.Copy(cmod.ModPath, settings.PathModFolder + "\\" + filename);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(this, "Could not copy file:\n" + cmod.ModPath + "\nto:\n" + settings.PathModFolder + "\\" + filename, "[Error] Load mods", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    } 
+                }
+            }
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-
+            DialogResult res = MessageBox.Show(this, "Unload mods? This aciton will delete all mods in the selected mods folder:\n" + settings.PathModFolder + "\n\nUnload Mods?", "[Info] Load mods", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            if (res == DialogResult.OK) 
+            {
+                try
+                {
+                    IEnumerable<string> currentFiles = Directory.EnumerateFiles(settings.PathModFolder);
+                    foreach (string file in currentFiles)
+                    {
+                        string extention = Path.GetExtension(file);
+                        if (extention == ".jar" || extention == ".JAR") File.Delete(file);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, ex.Message, "[Error] Unload mods", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -337,6 +417,7 @@ namespace MinecraftModManager
             {
                 ModsGroupBox.Enabled = true;
                 ModCheckList.Items.Clear();
+                if (selectedModGroup.mods == null) return;
                 foreach (Mod mod in selectedModGroup.mods)
                 {
                     ModCheckList.Items.Add(mod.ModName);
