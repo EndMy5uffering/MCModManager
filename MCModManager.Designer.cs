@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MinecraftModManager));
             label1 = new Label();
             textBox1 = new TextBox();
             textBox2 = new TextBox();
@@ -42,6 +43,7 @@
             OpenModPath = new Button();
             OpenResourcePath = new Button();
             ModsGroupBox = new GroupBox();
+            AllChecked = new CheckBox();
             button8 = new Button();
             button7 = new Button();
             ModCheckList = new CheckedListBox();
@@ -94,6 +96,7 @@
             label2.TabIndex = 3;
             label2.Text = "🗁Mod folder:";
             label2.TextAlign = ContentAlignment.MiddleRight;
+            label2.Click += label2_Click;
             // 
             // label3
             // 
@@ -103,6 +106,7 @@
             label3.TabIndex = 4;
             label3.Text = "🗁Resource root:";
             label3.TextAlign = ContentAlignment.MiddleRight;
+            label3.Click += label3_Click;
             // 
             // ModGroupsGouping
             // 
@@ -191,6 +195,7 @@
             // 
             // ModsGroupBox
             // 
+            ModsGroupBox.Controls.Add(AllChecked);
             ModsGroupBox.Controls.Add(button8);
             ModsGroupBox.Controls.Add(button7);
             ModsGroupBox.Controls.Add(ModCheckList);
@@ -204,6 +209,17 @@
             ModsGroupBox.TabIndex = 6;
             ModsGroupBox.TabStop = false;
             ModsGroupBox.Text = "Mods";
+            // 
+            // AllChecked
+            // 
+            AllChecked.AutoSize = true;
+            AllChecked.Location = new Point(9, 30);
+            AllChecked.Name = "AllChecked";
+            AllChecked.Size = new Size(89, 18);
+            AllChecked.TabIndex = 9;
+            AllChecked.Text = "Check all";
+            AllChecked.UseVisualStyleBackColor = true;
+            AllChecked.CheckedChanged += AllChecked_CheckedChanged;
             // 
             // button8
             // 
@@ -258,9 +274,9 @@
             // label5
             // 
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label5.Location = new Point(6, 27);
+            label5.Location = new Point(108, 27);
             label5.Name = "label5";
-            label5.Size = new Size(327, 21);
+            label5.Size = new Size(225, 21);
             label5.TabIndex = 0;
             label5.Text = "Available mods in group";
             label5.TextAlign = ContentAlignment.MiddleCenter;
@@ -280,6 +296,7 @@
             Controls.Add(textBox1);
             Controls.Add(label1);
             Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MaximumSize = new Size(726, 563);
             MdiChildrenMinimizedAnchorBottom = false;
@@ -291,6 +308,7 @@
             ModGroupsGouping.ResumeLayout(false);
             ModGroupsGouping.PerformLayout();
             ModsGroupBox.ResumeLayout(false);
+            ModsGroupBox.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -317,5 +335,6 @@
         private Button button8;
         private Button button7;
         private TextBox NewGroupNameTextbox;
+        private CheckBox AllChecked;
     }
 }
