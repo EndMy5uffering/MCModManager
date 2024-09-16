@@ -48,12 +48,12 @@ namespace MinecraftModManager
             WriteResources();
         }
 
-        void WriteSettings() 
+        void WriteSettings()
         {
             File.WriteAllText("./Settings.json", JsonSerializer.Serialize(settings));
         }
 
-        void WriteResources() 
+        void WriteResources()
         {
             if (settings.RootResourcePath != null && File.Exists(settings.RootResourcePath + "\\resources.json"))
             {
@@ -98,13 +98,13 @@ namespace MinecraftModManager
                 List<ModGroup> modGroup = JsonSerializer.Deserialize<List<ModGroup>>(fs);
                 if (modGroup != null) ModGroups = modGroup;
                 int uitemCount = 0;
-                foreach (ModGroup mg in modGroup) 
+                foreach (ModGroup mg in modGroup)
                 {
                     if (mg.ModGroupName != null)
                     {
                         ModGroupItembox.Items.Add(mg.ModGroupName);
                     }
-                    else 
+                    else
                     {
                         ModGroupItembox.Items.Add("Unidentified " + uitemCount);
                         uitemCount++;
@@ -146,7 +146,7 @@ namespace MinecraftModManager
 
         private void AddNewModGroup_Click(object sender, EventArgs e)
         {
-            if (settings.RootResourcePath == null || !File.Exists(settings.RootResourcePath + "\\resources.json")) 
+            if (settings.RootResourcePath == null || !File.Exists(settings.RootResourcePath + "\\resources.json"))
             {
                 MessageBox.Show(this, "Can not add group without resource path or resource file!", "[Error] Add Group", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -171,20 +171,47 @@ namespace MinecraftModManager
             ModGroup modGroup = new ModGroup();
             modGroup.ModGroupName = ngroupName;
             this.ModGroups.Add(modGroup);
+
+            Directory.CreateDirectory(settings.RootResourcePath + "\\" + modGroup.ModGroupName);
+
             WriteResources();
         }
 
         private void DeleteSelectedModGroup_Click(object sender, EventArgs e)
         {
-            if (selectedModGroup != null) 
+            if (selectedModGroup != null)
             {
-                DialogResult res = MessageBox.Show(this, "");
+                DialogResult res = MessageBox.Show(this, "Remove mod group and all mods within the group " + selectedModGroup.ModGroupName + "?", "Remove group " + selectedModGroup.ModGroupName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (res == DialogResult.Cancel)
+                {
+                    return;
+                }
+                else if (res == DialogResult.OK)
+                {
+                    ModGroupItembox.Items.Remove(selectedModGroup.ModGroupName);
+                    ModCheckList.Items.Clear();
+                    ModsGroupBox.Enabled = false;
+                    ModGroups.Remove(selectedModGroup);
 
-                ModGroupItembox.Items.Remove(selectedModGroup.ModGroupName);
-                ModGroups.Remove(selectedModGroup);
-                selectedModGroup = null;
-                
-                WriteResources();
+                    try
+                    {
+                        IEnumerable<string> fileNames = Directory.EnumerateFiles(settings.RootResourcePath + "\\" + selectedModGroup.ModGroupName);
+                        foreach (string fileName in fileNames)
+                        {
+                            if (!File.Exists(fileName)) { continue; }
+                            File.Delete(fileName);
+                        }
+                        Directory.Delete(settings.RootResourcePath + "\\" + selectedModGroup.ModGroupName);
+                    }
+                    catch (Exception ex) 
+                    {
+                        MessageBox.Show(this, ex.Message, "[Error] Delete group " + selectedModGroup.ModGroupName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    MessageBox.Show(this, "Group " + selectedModGroup.ModGroupName + " deleted.", "[Info] Delete group " + selectedModGroup.ModGroupName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    selectedModGroup = null;
+                    WriteResources();
+                }
             }
         }
 
@@ -223,10 +250,10 @@ namespace MinecraftModManager
             if (ModGroupItembox.SelectedItems.Count <= 0) return;
             object? item = ModGroupItembox.SelectedItems[0];
             if (item == null) return;
-            for (int i = 0; i < ModGroups.Count; ++i) 
+            for (int i = 0; i < ModGroups.Count; ++i)
             {
                 ModGroup modGroup = ModGroups[i];
-                if (modGroup.ModGroupName == (string)item) 
+                if (modGroup.ModGroupName == (string)item)
                 {
                     selectedModGroup = modGroup;
                     break;
@@ -237,10 +264,15 @@ namespace MinecraftModManager
             {
                 ModsGroupBox.Enabled = true;
             }
-            else 
+            else
             {
                 ModsGroupBox.Enabled = false;
             }
+        }
+
+        private void ModCheckList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

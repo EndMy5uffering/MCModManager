@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\Programming\\CS_Projects\\MinecraftModManager\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3D212D57-56FD-4980-99E6-2F4A37F9F40D}|MinecraftModManager.csproj|d:\\programming\\cs_projects\\minecraftmodmanager\\mcmodmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3D212D57-56FD-4980-99E6-2F4A37F9F40D}|MinecraftModManager.csproj|solutionrelative:mcmodmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{3D212D57-56FD-4980-99E6-2F4A37F9F40D}|MinecraftModManager.csproj|D:\\Programming\\CS_Projects\\MinecraftModManager\\mcmodmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{3D212D57-56FD-4980-99E6-2F4A37F9F40D}|MinecraftModManager.csproj|solutionrelative:mcmodmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3D212D57-56FD-4980-99E6-2F4A37F9F40D}|MinecraftModManager.csproj|d:\\programming\\cs_projects\\minecraftmodmanager\\mcmodmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3D212D57-56FD-4980-99E6-2F4A37F9F40D}|MinecraftModManager.csproj|solutionrelative:mcmodmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3D212D57-56FD-4980-99E6-2F4A37F9F40D}|MinecraftModManager.csproj|d:\\programming\\cs_projects\\minecraftmodmanager\\modgroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
@@ -70,27 +70,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "MCModManager.cs",
               "DocumentMoniker": "D:\\Programming\\CS_Projects\\MinecraftModManager\\MCModManager.cs",
               "RelativeDocumentMoniker": "MCModManager.cs",
               "ToolTip": "D:\\Programming\\CS_Projects\\MinecraftModManager\\MCModManager.cs",
               "RelativeToolTip": "MCModManager.cs",
-              "ViewState": "AQIAAKEAAAAAAAAAAAAlwK0AAAAdAAAA",
+              "ViewState": "AQIAAMUAAAAAAAAAAAAuwNIAAADKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-15T19:35:39.847Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "MCModManager.cs [Design]",
               "DocumentMoniker": "D:\\Programming\\CS_Projects\\MinecraftModManager\\MCModManager.cs",
               "RelativeDocumentMoniker": "MCModManager.cs",
               "ToolTip": "D:\\Programming\\CS_Projects\\MinecraftModManager\\MCModManager.cs [Design]",
               "RelativeToolTip": "MCModManager.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-15T20:48:44.93Z"
+              "WhenOpened": "2024-09-15T20:48:44.93Z",
+              "EditorCaption": " [Design]"
             }
           ]
         }

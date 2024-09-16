@@ -232,6 +232,7 @@
             ModCheckList.Name = "ModCheckList";
             ModCheckList.Size = new Size(327, 259);
             ModCheckList.TabIndex = 4;
+            ModCheckList.SelectedIndexChanged += ModCheckList_SelectedIndexChanged;
             // 
             // button5
             // 
@@ -261,7 +262,7 @@
             label5.Name = "label5";
             label5.Size = new Size(327, 21);
             label5.TabIndex = 0;
-            label5.Text = "Available mods in groups";
+            label5.Text = "Available mods in group";
             label5.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // MinecraftModManager
